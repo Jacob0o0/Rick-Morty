@@ -44,22 +44,9 @@
 		F1746461BCB59ADC8254D55D /* Pods-Rick&Morty.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rick&Morty.release.xcconfig"; path = "Target Support Files/Pods-Rick&Morty/Pods-Rick&Morty.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CA7F17302FE0850900F4B350 /* Exceptions for "Rick&Morty" folder in "Rick&Morty" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				README.md,
-			);
-			target = CA7149952FDDEAEC00F17F7B /* Rick&Morty */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CA7149982FDDEAEC00F17F7B /* Rick&Morty */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				CA7F17302FE0850900F4B350 /* Exceptions for "Rick&Morty" folder in "Rick&Morty" target */,
-			);
 			path = "Rick&Morty";
 			sourceTree = "<group>";
 		};
