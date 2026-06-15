@@ -5,7 +5,6 @@
 //  Created by Jacobo Escorcia on 13/06/26.
 //
 
-// Para facilitar las pruebas unitarias
 protocol GetCharactersUseCaseProtocol: Sendable {
     func execute(page: Int, name: String?, status: String?, species: String?) async throws -> [Character]
 }

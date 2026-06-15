@@ -85,7 +85,7 @@ final class CharacterListViewModel {
                 currentPage += 1
                 state = .success
             }
-        } catch CharacterError.notFound {
+        } catch ResponseError.notFound {
             // La API no encontró resultados (estado vacío)
             canLoadMore = false
             state = characters.isEmpty ? .empty : .success
@@ -100,5 +100,10 @@ final class CharacterListViewModel {
 
     func applyFilters() async {
         await loadCharacters(reset: true)
+    }
+    
+    func fetchCharactersIfNeeded() async {
+        guard characters.isEmpty else { return }
+        await loadCharacters()
     }
 }

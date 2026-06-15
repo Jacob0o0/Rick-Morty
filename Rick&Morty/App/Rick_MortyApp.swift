@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import Swinject
 
 @main
 struct Rick_MortyApp: App {
@@ -14,11 +15,27 @@ struct Rick_MortyApp: App {
 
     var body: some Scene {
         WindowGroup {
-            let viewModel = CharacterListViewModel(
-                getCharactersUseCase: environment.getCharactersUseCase
-            )
-            CharacterListView(viewModel: viewModel)
-                .environment(\.appEnvironment, environment)
+            TabView {
+                CharacterListView(
+                    viewModel: environment.makeCharacterListViewModel()
+                )
+                .tabItem {
+                    Label("Personajes", systemImage: "person.3")
+                }
+                .accessibilityIdentifier("charactersTab")
+
+                FavoritesView(
+                    viewModel: environment.makeFavoritesViewModel()
+                )
+                .tabItem {
+                    Label("Favoritos", systemImage: "heart.fill")
+                }
+                .accessibilityIdentifier("favoritesTab")
+                
+                CharacterMapViewContainer()
+                    .tabItem { Label("Mapa", systemImage: "map") }
+            }
+            .environment(\.appEnvironment, environment)
         }
     }
 }

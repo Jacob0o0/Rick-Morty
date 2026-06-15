@@ -7,66 +7,27 @@
 
 import Foundation
 
-enum CharacterError: Error {
-    case notFound
-    case network
-    case unknown
-}
-
 final class CharacterRepositoryImpl: CharacterRepositoryProtocol, Sendable {
-    // URL base de la API
-    private let baseURL = "https://rickandmortyapi.com/api"
-    
-    private let session: URLSession = .shared
-    
+    private let client: HTTPClientProtocol
+
+    init(client: HTTPClientProtocol = HTTPClient()) {
+        self.client = client
+    }
+
     func fetchCharacters(
         page: Int,
         name: String?,
         status: String?,
         species: String?
     ) async throws -> [Character] {
-        // URL con parámetros
-        var components = URLComponents(string: "\(baseURL)/character")!
-        var queryItems = [URLQueryItem(name: "page", value: "\(page)")]
-        
-        if let name = name { queryItems.append(URLQueryItem(name: "name", value: name)) }
-        if let status = status { queryItems.append(URLQueryItem(name: "status", value: status)) }
-        if let species = species { queryItems.append(URLQueryItem(name: "species", value: species)) }
-        
-        components.queryItems = queryItems
-        
-        guard let url = components.url else { throw URLError(.badURL) }
-        
-        print(url)
-
-        // Petición de red
-        let (data, response) = try await session.data(from: url)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw CharacterError.network
-        }
-
-        switch httpResponse.statusCode {
-        case 200:
-            let responseDTO = try JSONDecoder().decode(CharacterResponseDTO.self, from: data)
-            return responseDTO.results.map { $0.toDomain() }
-        case 404:
-            throw CharacterError.notFound  // ← sin resultados, no es error de red
-        default:
-            throw CharacterError.network
-        }
+        let response: CharacterResponseDTO = try await client.get(
+            .characters(page: page, name: name, status: status, species: species)
+        )
+        return response.results.map { $0.toDomain() }
     }
-    
+
     func fetchCharacter(id: Int) async throws -> Character {
-        guard let url = URL(string: "\(baseURL)/character/\(id)") else {
-            throw URLError(.badURL)
-        }
-        
-        let (data, _) = try await session.data(from: url)
-        
-        // Decodificando directamente el DTO
-        let dto = try JSONDecoder().decode(CharacterDTO.self, from: data)
-        
+        let dto: CharacterDTO = try await client.get(.character(id: id))
         return dto.toDomain()
     }
 }

@@ -50,12 +50,15 @@ struct CharacterListView: View {
                 case .success, .loadingMore:
                     List {
                         ForEach(viewModel.characters) { character in
-                            CharacterRow(character: character)
-                                .onAppear {
-                                    if character.id == viewModel.characters.last?.id {
-                                        Task { await viewModel.loadCharacters() }
+                            NavigationLink(destination: CharacterDetailView(character: character)) {
+                                CharacterRow(character: character)
+                                    .onAppear {
+                                        if character.id == viewModel.characters.last?.id {
+                                            Task { await viewModel.loadCharacters() }
+                                        }
                                     }
-                                }
+                            }
+                            .accessibilityIdentifier("character_\(character.id)")
                         }
 
                         if viewModel.state == .loadingMore {
@@ -65,20 +68,21 @@ struct CharacterListView: View {
                         }
                     }
                     .listStyle(.plain)
-                    
                 }
             }
-            .listStyle(.plain)
             .navigationTitle("Personajes")
+            // ↓ Barra de búsqueda por nombre
             .searchable(
                 text: $viewModel.searchText,
                 placement: .navigationBarDrawer(displayMode: .always),
                 prompt: "Buscar personaje..."
             )
             .onSubmit(of: .search) {
+                // Se dispara cuando el usuario presiona "Buscar" en el teclado
                 Task { await viewModel.applyFilters() }
             }
             .onChange(of: viewModel.searchText) { _, newValue in
+                // Recarga sin filtro cuando borra el texto
                 if newValue.isEmpty {
                     Task { await viewModel.applyFilters() }
                 }

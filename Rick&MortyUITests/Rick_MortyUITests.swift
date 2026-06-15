@@ -8,14 +8,14 @@
 import XCTest
 
 final class Rick_MortyUITests: XCTestCase {
+    private var app: XCUIApplication!
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+    
+        app = XCUIApplication()
+        app.launchArguments.append("UITests")
+        app.launch()
     }
 
     override func tearDownWithError() throws {
@@ -38,4 +38,43 @@ final class Rick_MortyUITests: XCTestCase {
             XCUIApplication().launch()
         }
     }
+    
+    func testAddAndRemoveFavoriteFlow() {
+
+            // Verificar pestaña Personajes
+            let charactersTab = app.tabBars.buttons["Personajes"]
+            XCTAssertTrue(charactersTab.waitForExistence(timeout: 5))
+            charactersTab.tap()
+
+            // Abrir primer personaje
+            let firstCharacter = app.buttons["character_1"]
+            XCTAssertTrue(firstCharacter.waitForExistence(timeout: 10))
+            firstCharacter.tap()
+
+            // Agregar a favoritos
+            let favoriteButton = app.buttons["favoriteButton"]
+            XCTAssertTrue(favoriteButton.waitForExistence(timeout: 5))
+            favoriteButton.tap()
+
+            // Ir a Favoritos
+            let favoritesTab = app.tabBars.buttons["Favoritos"]
+            XCTAssertTrue(favoritesTab.waitForExistence(timeout: 5))
+            favoritesTab.tap()
+
+            // Verificar favorito
+            let favoriteCell = app.otherElements["favorite_1"]
+            XCTAssertTrue(
+                favoriteCell.waitForExistence(timeout: 5)
+            )
+
+            // Eliminar favorito
+            favoriteCell.swipeLeft()
+            let deleteButton = app.buttons["Delete"]
+            XCTAssertTrue(deleteButton.exists)
+            deleteButton.tap()
+
+            // Verificar eliminación
+            XCTAssertFalse(favoriteCell.waitForExistence(timeout: 2))
+
+        }
 }

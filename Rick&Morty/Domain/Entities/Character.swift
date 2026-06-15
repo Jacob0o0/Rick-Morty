@@ -39,4 +39,3 @@ struct LocationReference: Sendable {
     let name: String
     let url: String
 }
-
